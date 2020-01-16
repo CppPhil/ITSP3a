@@ -31,7 +31,7 @@ if [ "$1" == "Debug" ]; then
     
     # Build the project
     cmake --build .
-    
+   
     cd $prev_dir
     exit 0
 fi
@@ -41,7 +41,7 @@ if [ "$1" == "Release" ]; then
     
     # Build the project
     cmake --build .
-    
+       
     cd $prev_dir
     exit 0
 fi
