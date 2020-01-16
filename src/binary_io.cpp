@@ -3,7 +3,7 @@
 #include "../include/print_bytes_as_ascii.hpp" // itsp3::PrintBytesAsAscii
 #include <ciso646>                             // not
 #include <ostream>                             // std::ostream
-#include <pl/print_bytes_as_hex.hpp>           // pl::PrintBytesAsHex
+#include <pl/print_bytes_as_hex.hpp>           // pl::print_bytes_as_hex
 
 namespace itsp3 {
 std::fstream& openFileForBinaryReading(
@@ -33,7 +33,7 @@ std::ostream&
 writeBinary(std::ostream& os, const void* data, std::size_t dataByteSize)
 {
     ITSP3_LOG << "Writing data:\n"
-              << "hex:   " << pl::PrintBytesAsHex{data, dataByteSize} << '\n'
+              << "hex:   " << pl::print_bytes_as_hex{data, dataByteSize} << '\n'
               << "ASCII: " << PrintBytesAsAscii{data, dataByteSize};
 
     return os.write(

@@ -4,7 +4,7 @@
 #include <climits>                  // UCHAR_MAX
 #include <istream>                  // std::istream
 #include <ostream>                  // std::ostream
-#include <pl/byte.hpp>              // pl::Byte
+#include <pl/byte.hpp>              // pl::byte
 #include <utility>                  // std::move
 
 namespace itsp3 {
@@ -13,7 +13,7 @@ std::istream& Record::read(std::istream& is, Record* outParam)
     PL_DBG_CHECK_PRE(outParam != nullptr);
 
     // read one byte, the size of the following username.
-    pl::Byte usernameByteSize{};
+    pl::byte usernameByteSize{};
     if (not readBinary(is, &usernameByteSize, sizeof(usernameByteSize))) {
         return is; // return on read failure, as 'usernameByteSize' would
                    // contain an invalid value.
@@ -27,7 +27,7 @@ std::istream& Record::read(std::istream& is, Record* outParam)
     }
 
     // read one byte, the size of the following hash.
-    pl::Byte hashByteSize{};
+    pl::byte hashByteSize{};
     if (not readBinary(is, &hashByteSize, sizeof(hashByteSize))) {
         return is; // return on read failure, as 'hashByteSize' would
                    // contain an invalid value.
@@ -64,9 +64,9 @@ Record::Record(std::string username, std::string hash)
 
 std::ostream& Record::write(std::ostream& os) const
 {
-    const pl::Byte usernameByteSize{static_cast<pl::Byte>(m_username.size())};
+    const pl::byte usernameByteSize{static_cast<pl::byte>(m_username.size())};
     const std::string& username{m_username};
-    const pl::Byte     hashByteSize{static_cast<pl::Byte>(m_hash.size())};
+    const pl::byte     hashByteSize{static_cast<pl::byte>(m_hash.size())};
     const std::string& hash{m_hash};
 
     writeBinary(os, &usernameByteSize, sizeof(usernameByteSize));

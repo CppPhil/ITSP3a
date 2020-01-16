@@ -1,5 +1,5 @@
 #include "../include/string_scrubber.hpp"
-#include <pl/zero_memory.hpp> // pl::secureZeroMemory
+#include <pl/zero_memory.hpp> // pl::secure_zero_memory
 
 namespace itsp3 {
 StringScrubber::StringScrubber(std::string& stringToScrub) noexcept
@@ -10,6 +10,6 @@ StringScrubber::StringScrubber(std::string& stringToScrub) noexcept
 StringScrubber::~StringScrubber()
 {
     // replace the memory currently owned by the string with 0x00 bytes
-    pl::secureZeroMemory(&((*m_stringToScrub)[0U]), m_stringToScrub->size());
+    pl::secure_zero_memory(&((*m_stringToScrub)[0U]), m_stringToScrub->size());
 }
 } // namespace itsp3

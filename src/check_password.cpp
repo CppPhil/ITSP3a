@@ -32,9 +32,9 @@ constexpr std::array<char, ':' - '0'> numbers = makeAlphabet<'0', ':'>();
 
 /*!
  * The 'special' characters.
- * pl::cont::makeArray is used to deduce the size of the std::array
+ * pl::cont::make_array is used to deduce the size of the std::array
  **/
-constexpr auto specialCharacters = ::pl::cont::makeArray(
+constexpr auto specialCharacters = ::pl::cont::make_array(
     ' ',
     '!',
     '"',

@@ -1,6 +1,6 @@
 #include "../include/log.hpp"
-#include <pl/integer.hpp> // pl::Uint
-#include <utility>        // std::move
+#include <cstdint> // std::uint64_t
+#include <utility> // std::move
 
 namespace itsp3 {
 namespace detail {
@@ -29,7 +29,7 @@ Log::Log(std::string logFilePath)
 
 Log& createLogEntry(const char* file, const char* line, const char* function)
 {
-    static pl::Uint<64> entryNumber{0U};
+    static std::uint64_t entryNumber{0U};
 
     Log& log{Log::getInstance()};
 
