@@ -1,10 +1,9 @@
 #include "../include/string_scrubber.hpp"
 #include <pl/zero_memory.hpp> // pl::secureZeroMemory
 
-namespace itsp3
-{
-StringScrubber::StringScrubber(std::string &stringToScrub) noexcept
-    : m_stringToScrub{ &stringToScrub } // save a pointer to the std::string.
+namespace itsp3 {
+StringScrubber::StringScrubber(std::string& stringToScrub) noexcept
+    : m_stringToScrub{&stringToScrub} // save a pointer to the std::string.
 {
 }
 

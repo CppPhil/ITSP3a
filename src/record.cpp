@@ -1,20 +1,19 @@
 #include "../include/record.hpp"
 #include "../include/binary_io.hpp" // itsp3::readBinary
-#include <pl/byte.hpp> // pl::Byte
-#include <ciso646> // not
-#include <climits> // UCHAR_MAX
-#include <istream> // std::istream
-#include <ostream> // std::ostream
-#include <utility> // std::move
+#include <ciso646>                  // not
+#include <climits>                  // UCHAR_MAX
+#include <istream>                  // std::istream
+#include <ostream>                  // std::ostream
+#include <pl/byte.hpp>              // pl::Byte
+#include <utility>                  // std::move
 
-namespace itsp3
-{
-std::istream &Record::read(std::istream &is, Record *outParam)
+namespace itsp3 {
+std::istream& Record::read(std::istream& is, Record* outParam)
 {
     PL_DBG_CHECK_PRE(outParam != nullptr);
 
     // read one byte, the size of the following username.
-    pl::Byte usernameByteSize{ };
+    pl::Byte usernameByteSize{};
     if (not readBinary(is, &usernameByteSize, sizeof(usernameByteSize))) {
         return is; // return on read failure, as 'usernameByteSize' would
                    // contain an invalid value.
@@ -28,7 +27,7 @@ std::istream &Record::read(std::istream &is, Record *outParam)
     }
 
     // read one byte, the size of the following hash.
-    pl::Byte hashByteSize{ };
+    pl::Byte hashByteSize{};
     if (not readBinary(is, &hashByteSize, sizeof(hashByteSize))) {
         return is; // return on read failure, as 'hashByteSize' would
                    // contain an invalid value.
@@ -37,44 +36,38 @@ std::istream &Record::read(std::istream &is, Record *outParam)
     // read the hash.
     std::string hashBuffer(
         static_cast<std::string::size_type>(hashByteSize), ' ');
-    if (not readBinary(is, &hashBuffer[0U], hashBuffer.size())) {
-        return is;
-    }
+    if (not readBinary(is, &hashBuffer[0U], hashBuffer.size())) { return is; }
 
     // write the data extracted to the output parameter.
-    *outParam = Record{ std::move(usernameBuffer), std::move(hashBuffer) };
+    *outParam = Record{std::move(usernameBuffer), std::move(hashBuffer)};
 
     return is;
 }
 
-Record::Record() noexcept
-    : Record{ "", "" } // delegate to the binary constructor
+Record::Record() noexcept : Record{"", ""} // delegate to the binary constructor
 {
 }
 
 Record::Record(std::string username, std::string hash)
-    : m_username{ std::move(username) },
-      m_hash{ std::move(hash) }
+    : m_username{std::move(username)}, m_hash{std::move(hash)}
 {
     if (m_username.size() > UCHAR_MAX) {
         PL_THROW_WITH_SOURCE_INFO(
-            TooLongStringForRecordException,
-            "username was too long");
+            TooLongStringForRecordException, "username was too long");
     }
 
     if (m_hash.size() > UCHAR_MAX) {
         PL_THROW_WITH_SOURCE_INFO(
-            TooLongStringForRecordException,
-            "hash was too long");
+            TooLongStringForRecordException, "hash was too long");
     }
 }
 
-std::ostream &Record::write(std::ostream &os) const
+std::ostream& Record::write(std::ostream& os) const
 {
-    const pl::Byte usernameByteSize{ static_cast<pl::Byte>(m_username.size()) };
-    const std::string &username{ m_username };
-    const pl::Byte hashByteSize{ static_cast<pl::Byte>(m_hash.size()) };
-    const std::string &hash{ m_hash };
+    const pl::Byte usernameByteSize{static_cast<pl::Byte>(m_username.size())};
+    const std::string& username{m_username};
+    const pl::Byte     hashByteSize{static_cast<pl::Byte>(m_hash.size())};
+    const std::string& hash{m_hash};
 
     writeBinary(os, &usernameByteSize, sizeof(usernameByteSize));
     writeBinary(os, username.data(), username.size());
@@ -84,13 +77,7 @@ std::ostream &Record::write(std::ostream &os) const
     return os;
 }
 
-boost::string_ref Record::getUsername() const noexcept
-{
-    return m_username;
-}
+boost::string_ref Record::getUsername() const noexcept { return m_username; }
 
-boost::string_ref Record::getHash() const noexcept
-{
-    return m_hash;
-}
+boost::string_ref Record::getHash() const noexcept { return m_hash; }
 } // namespace itsp3

@@ -1,48 +1,45 @@
 #include "../include/log.hpp"
 #include <pl/integer.hpp> // pl::Uint
-#include <utility> // std::move
+#include <utility>        // std::move
 
-namespace itsp3
-{
-namespace detail
-{
-Log &Log::getInstance()
+namespace itsp3 {
+namespace detail {
+Log& Log::getInstance()
 {
 #ifdef DEBUG_MODE
     static Log log{
         "./debug.log" // The path to the debug.log file.
     };
 #else
-    static Log log{ };
+    static Log log{};
 #endif
     return log;
 }
 
 Log::Log()
-    : m_logFilePath{ },
-      m_ofstream{ } // not associated with any file in release mode.
+    : m_logFilePath{}
+    , m_ofstream{} // not associated with any file in release mode.
 {
 }
 
 Log::Log(std::string logFilePath)
-    : m_logFilePath{ std::move(logFilePath) },
-      m_ofstream{ m_logFilePath }
+    : m_logFilePath{std::move(logFilePath)}, m_ofstream{m_logFilePath}
 {
 }
 
-Log &createLogEntry(const char *file, const char *line, const char *function)
+Log& createLogEntry(const char* file, const char* line, const char* function)
 {
-    static pl::Uint<64> entryNumber{ 0U };
+    static pl::Uint<64> entryNumber{0U};
 
-    Log &log{ Log::getInstance() };
+    Log& log{Log::getInstance()};
 
     ++entryNumber;
 
     log << "\n\n"
         << "Entry:    " << entryNumber << '\n'
-        << "File:     " << file        << '\n'
-        << "Line:     " << line        << '\n'
-        << "Function: " << function    << '\n'
+        << "File:     " << file << '\n'
+        << "Line:     " << line << '\n'
+        << "Function: " << function << '\n'
         << "Message:  ";
 
     return log;

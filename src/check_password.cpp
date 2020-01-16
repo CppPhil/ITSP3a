@@ -1,50 +1,73 @@
 #include "../include/check_password.hpp"
-#include "../include/alphabets.hpp" // itsp3::makeAlphabet
-#include "../include/log.hpp" // ITSP3_LOG
-#include <pl/assert.hpp> // PL_ASSERT
+#include "../include/alphabets.hpp"      // itsp3::makeAlphabet
+#include "../include/log.hpp"            // ITSP3_LOG
+#include <ciso646>                       // not
+#include <cstddef>                       // std::size_t
+#include <ostream>                       // std::ostream
 #include <pl/algo/ranged_algorithms.hpp> // pl::algo::any_of
-#include <ciso646> // not
-#include <cstddef> // std::size_t
-#include <ostream> // std::ostream
+#include <pl/assert.hpp>                 // PL_ASSERT
 
-namespace itsp3
-{
-namespace
-{
+namespace itsp3 {
+namespace {
 /*!
  * All the lower case character. (Assuming ASCII implementation).
  * '{' is the character after 'z'. (Note the use of half open ranges typical
  * in C++).
  * See an ASCII chart for reference at:
  * http://en.cppreference.com/w/cpp/language/ascii
-**/
+ **/
 constexpr std::array<char, '{' - 'a'> lowerCaseCharacters
     = makeAlphabet<'a', '{'>();
 
 /*!
  * The upper case characters.
-**/
+ **/
 constexpr std::array<char, '[' - 'A'> upperCaseCharacters
     = makeAlphabet<'A', '['>();
 
 /*!
  * The numbers '0' - '9' as chars.
-**/
-constexpr std::array<char, ':' - '0'> numbers
-    = makeAlphabet<'0', ':'>();
+ **/
+constexpr std::array<char, ':' - '0'> numbers = makeAlphabet<'0', ':'>();
 
 /*!
  * The 'special' characters.
  * pl::cont::makeArray is used to deduce the size of the std::array
-**/
+ **/
 constexpr auto specialCharacters = ::pl::cont::makeArray(
-    ' ', '!', '"', '#', '$', '%',
-    '&', '\'', '(', ')', '*', '+',
-    ',', '-', '.', '/', ':', ';',
-    '<', '=', '>', '?', '@', '[',
-    '\\', ']', '^', '_', '`', '{',
-    '|', '}', '~'
-);
+    ' ',
+    '!',
+    '"',
+    '#',
+    '$',
+    '%',
+    '&',
+    '\'',
+    '(',
+    ')',
+    '*',
+    '+',
+    ',',
+    '-',
+    '.',
+    '/',
+    ':',
+    ';',
+    '<',
+    '=',
+    '>',
+    '?',
+    '@',
+    '[',
+    '\\',
+    ']',
+    '^',
+    '_',
+    '`',
+    '{',
+    '|',
+    '}',
+    '~');
 
 /*!
  * \brief Module local function to check if 'c' is a lower case character.
@@ -58,13 +81,11 @@ constexpr auto specialCharacters = ::pl::cont::makeArray(
  *       0xFF (both inclusive) (assuming CHAR_BIT == 8, that is bytes being
  *       8 bit large). These funny assertion cause the application to crash
  *       on bad input, which is just ridiculous.
-**/
+ **/
 bool isLowerCase(char c) noexcept
 {
-    return pl::algo::any_of(
-        lowerCaseCharacters,
-        [c](char lowerCaseChar) {
-            return lowerCaseChar == c;
+    return pl::algo::any_of(lowerCaseCharacters, [c](char lowerCaseChar) {
+        return lowerCaseChar == c;
     });
 }
 
@@ -72,13 +93,11 @@ bool isLowerCase(char c) noexcept
  * \brief Module local function to check if 'c' is an upper case character.
  * \param c The character to check.
  * \return true if 'c' is an upper case character, false otherwise.
-**/
+ **/
 bool isUpperCase(char c) noexcept
 {
-    return pl::algo::any_of(
-        upperCaseCharacters,
-        [c](char upperCaseChar) {
-            return upperCaseChar == c;
+    return pl::algo::any_of(upperCaseCharacters, [c](char upperCaseChar) {
+        return upperCaseChar == c;
     });
 }
 
@@ -88,14 +107,10 @@ bool isUpperCase(char c) noexcept
  *        '8', or '9'.
  * \param c The characeter to check.
  * \return true if 'c' is considered to be a 'number', false otherwise.
-**/
+ **/
 bool isNumber(char c) noexcept
 {
-    return pl::algo::any_of(
-        numbers,
-        [c](char number) {
-            return number == c;
-    });
+    return pl::algo::any_of(numbers, [c](char number) { return number == c; });
 }
 
 /*!
@@ -107,13 +122,11 @@ bool isNumber(char c) noexcept
  * \param c The character to check.
  * \return true if 'c' is considered to be a special character, otherwise
  *         false.
-**/
+ **/
 bool isSpecialCharacter(char c) noexcept
 {
-    return pl::algo::any_of(
-        specialCharacters,
-        [c](char specialCharacter) {
-            return specialCharacter == c;
+    return pl::algo::any_of(specialCharacters, [c](char specialCharacter) {
+        return specialCharacter == c;
     });
 }
 
@@ -123,10 +136,10 @@ bool isSpecialCharacter(char c) noexcept
  * \param password The password to check.
  * \return true if the password is considered to be long enough,
  *         otherwise false.
-**/
+ **/
 bool isPasswordLengthOk(boost::string_ref password) noexcept
 {
-    static constexpr std::size_t minimumPasswordLength{ 8U };
+    static constexpr std::size_t minimumPasswordLength{8U};
 
     return password.size() >= minimumPasswordLength;
 }
@@ -137,7 +150,7 @@ bool isPasswordLengthOk(boost::string_ref password) noexcept
  * \param password The password to check.
  * \return true if 'password' contains 1 or more lower case characters,
  *         otherwise false.
-**/
+ **/
 bool containsLowerCaseCharacter(boost::string_ref password) noexcept
 {
     return pl::algo::any_of(password, &isLowerCase);
@@ -149,7 +162,7 @@ bool containsLowerCaseCharacter(boost::string_ref password) noexcept
  * \param password The password to check.
  * \return true if 'password' contains 1 or more upper case characters,
  *         otherwise false.
-**/
+ **/
 bool containsUpperCaseCharacter(boost::string_ref password) noexcept
 {
     return pl::algo::any_of(password, &isUpperCase);
@@ -160,7 +173,7 @@ bool containsUpperCaseCharacter(boost::string_ref password) noexcept
  *        number.
  * \param password The password to check.
  * \return true if 'password' contains one or more numbers, otherwise false.
-**/
+ **/
 bool containsNumber(boost::string_ref password) noexcept
 {
     return pl::algo::any_of(password, &isNumber);
@@ -172,7 +185,7 @@ bool containsNumber(boost::string_ref password) noexcept
  * \param password The password to check.
  * \return true if 'password' contains one or more 'special' characters,
  *         otherwise false.
-**/
+ **/
 bool containsSpecialCharacter(boost::string_ref password) noexcept
 {
     return pl::algo::any_of(password, &isSpecialCharacter);
@@ -185,39 +198,37 @@ bool containsSpecialCharacter(boost::string_ref password) noexcept
  * \param username The username to be compared to the password.
  * \return true if 'password' considered equal to 'username', otherwise
  *         false.
-**/
+ **/
 bool isEqualToUsername(boost::string_ref password, boost::string_ref username)
 {
     return password == username;
 }
 } // anonymous namespace
 
-std::ostream &operator<<(
-    std::ostream &os,
+std::ostream& operator<<(
+    std::ostream&          os,
     PasswordCheckingResult passwordCheckingResult)
 {
     switch (passwordCheckingResult) {
     case PasswordCheckingResult::TooShort:
         return os << "The password must contain at least 8 characters.";
     case PasswordCheckingResult::TooFewLowerCaseCharacters:
-        return os << "The password must contain at least 1 lowercase character.";
+        return os
+               << "The password must contain at least 1 lowercase character.";
     case PasswordCheckingResult::TooFewUpperCaseCharacters:
-        return os << "The password must contain at least 1 uppercase character.";
+        return os
+               << "The password must contain at least 1 uppercase character.";
     case PasswordCheckingResult::TooFewNumbers:
         return os << "The password must contain at least 1 numeric character.";
     case PasswordCheckingResult::TooFewSpecialCharacters:
         os << "The password must contain at least 1 special character.\n"
               "Special characters include: ";
-        for (char c : specialCharacters) {
-            os << c << ' ';
-        }
+        for (char c : specialCharacters) { os << c << ' '; }
         return os;
     case PasswordCheckingResult::EqualToUsername:
         return os << "The password may not be equal to the username.";
-    case PasswordCheckingResult::Ok:
-        return os << "The password was accepted.";
-    default:
-        break;
+    case PasswordCheckingResult::Ok: return os << "The password was accepted.";
+    default: break;
     }
 
     // Control flow should never reach here!

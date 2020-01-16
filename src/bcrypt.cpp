@@ -1,31 +1,27 @@
 #include "../include/bcrypt.hpp"
-#include "../include/log.hpp" // ITSP3_LOG
-#include "../include/print_bytes_as_ascii.hpp" // itsp3::PrintBytesAsAscii
 #include "../include/binary_io.hpp" // itsp3::openFileForBinaryReading, itsp3::openFileForBinaryWriting
-#include "../include/string_scrubber.hpp" // itsp3::StringScrubber
-#include "../include/record.hpp" // itsp3::Record
-#include <pl/print_bytes_as_hex.hpp> // pl::print_bytes_as_hex
-#include <pl/algo/ranged_algorithms.hpp> // pl::algo::copy
-#include <ciso646> // not, or, and
-#include <string> // std::string
-#include <iterator> // std::begin, std::end
+#include "../include/log.hpp"                  // ITSP3_LOG
+#include "../include/print_bytes_as_ascii.hpp" // itsp3::PrintBytesAsAscii
+#include "../include/record.hpp"               // itsp3::Record
+#include "../include/string_scrubber.hpp"      // itsp3::StringScrubber
+#include <ciso646>                             // not, or, and
+#include <iterator>                            // std::begin, std::end
+#include <pl/algo/ranged_algorithms.hpp>       // pl::algo::copy
+#include <pl/print_bytes_as_hex.hpp>           // pl::print_bytes_as_hex
+#include <string>                              // std::string
 
-namespace itsp3
-{
-namespace
-{
+namespace itsp3 {
+namespace {
 /*!
  * \brief The size of the username and hash parts of the records written
  *        and read from the binary file.
  * \note A username may not be larger than 'maxSize'.
-**/
+ **/
 constexpr const std::size_t maxSize = BCRYPT_HASHSIZE;
 } // anonymous namespace
 
 Bcrypt::Bcrypt(std::string filePath)
-    : m_filePath{ std::move(filePath) },
-      m_salt{ },
-      m_hash{ }
+    : m_filePath{std::move(filePath)}, m_salt{}, m_hash{}
 {
     ITSP3_LOG << "Created Bcrypt object\n"
               << "filepath: " << m_filePath;
@@ -37,55 +33,44 @@ AddUserResult Bcrypt::addUser(
 {
 #ifdef ENABLE_PW_CHECKS
     const PasswordCheckingResult passwordCheckingResult{
-        checkPassword(username, password)
-    };
+        checkPassword(username, password)};
 
     if (passwordCheckingResult != PasswordCheckingResult::Ok) {
-        return AddUserResult{ passwordCheckingResult };
+        return AddUserResult{passwordCheckingResult};
     }
 #endif // ENABLE_PW_CHECKS
 
     if (not isLengthOk(username)) {
-        return AddUserResult{
-            AddUserResult::Value::Failure,
-            "Username was too long"
-        };
+        return AddUserResult{AddUserResult::Value::Failure,
+                             "Username was too long"};
     }
 
     if (not isLengthOk(password)) {
-        return AddUserResult{
-            AddUserResult::Value::Failure,
-            "Password was too long"
-        };
+        return AddUserResult{AddUserResult::Value::Failure,
+                             "Password was too long"};
     }
 
     ITSP3_LOG << "username: \"" << username << "\"\n"
               << "password: \"" << password << '"';
 
     // The optional will be set if a hash could be found for the username
-    boost::optional<std::string> hashOpt{ findHashOfUser(username) };
+    boost::optional<std::string> hashOpt{findHashOfUser(username)};
 
     // if the user was already there -> exit with failure
     if (hashOpt) {
-        ITSP3_LOG << "Found hash for user \""
-                  << username
+        ITSP3_LOG << "Found hash for user \"" << username
                   << "\", returning false.";
-        return AddUserResult{
-            AddUserResult::Value::Failure,
-            "User was already there."
-        };
+        return AddUserResult{AddUserResult::Value::Failure,
+                             "User was already there."};
     }
 
-    std::fstream fs{ }; // the filestream used to write to the file
+    std::fstream fs{}; // the filestream used to write to the file
 
     // if the file could not be opened -> exit with failure
     if (not openFileForBinaryWriting(fs, m_filePath)) {
-        ITSP3_LOG << "Failed to open filestream, path: \""
-                  << m_filePath << '"';
-        return AddUserResult{
-            AddUserResult::Value::Failure,
-            "Could not open binary file."
-        };
+        ITSP3_LOG << "Failed to open filestream, path: \"" << m_filePath << '"';
+        return AddUserResult{AddUserResult::Value::Failure,
+                             "Could not open binary file."};
     }
 
     // note that the file stream is opened in append mode by
@@ -96,67 +81,54 @@ AddUserResult Bcrypt::addUser(
 
     if (ret != 0) {
         ITSP3_LOG << "Failed to generate salt.";
-        return AddUserResult{
-            AddUserResult::Value::Failure,
-            "Could not generate salt."
-        };
+        return AddUserResult{AddUserResult::Value::Failure,
+                             "Could not generate salt."};
     }
 
     ITSP3_LOG << "Generated salt.\n"
               << "hex:   "
-              << pl::print_bytes_as_hex{ m_salt.data(), m_salt.size() }
-              << '\n'
-              << "ASCII: "
-              << PrintBytesAsAscii{ m_salt.data(), m_salt.size() };
+              << pl::print_bytes_as_hex{m_salt.data(), m_salt.size()} << '\n'
+              << "ASCII: " << PrintBytesAsAscii{m_salt.data(), m_salt.size()};
 
-    std::string hashInput{ username.to_string() + password.to_string() };
+    std::string hashInput{username.to_string() + password.to_string()};
 
     // 'hashInput' memory shall be zeroed out on scope exit
     // as it does contain the password
-    StringScrubber hashInputScrubber{ hashInput };
+    StringScrubber hashInputScrubber{hashInput};
 
     ITSP3_LOG << "The concatenation of username and password (hashInput) is:\n"
               << "hex:   "
-              << pl::print_bytes_as_hex{ hashInput.data(), hashInput.size() }
+              << pl::print_bytes_as_hex{hashInput.data(), hashInput.size()}
               << '\n'
               << "ASCII: "
-              << PrintBytesAsAscii{ hashInput.data(), hashInput.size() };
+              << PrintBytesAsAscii{hashInput.data(), hashInput.size()};
 
     // bcrypt_hashpw expects the first argument to be a null-terminated string
     ret = bcrypt_hashpw(hashInput.data(), m_salt.data(), m_hash.data());
 
     if (ret != 0) {
         ITSP3_LOG << "Failed to hash the hashInput!";
-        return AddUserResult{
-            AddUserResult::Value::Failure,
-            "Could not generate hash."
-        };
+        return AddUserResult{AddUserResult::Value::Failure,
+                             "Could not generate hash."};
     }
 
     ITSP3_LOG << "Created hash of the hashInput\n"
               << "hex:   "
-              << pl::print_bytes_as_hex{ m_hash.data(), m_hash.size() }
-              << '\n'
-              << "ASCII: "
-              << PrintBytesAsAscii{ m_hash.data(), m_hash.size() };
+              << pl::print_bytes_as_hex{m_hash.data(), m_hash.size()} << '\n'
+              << "ASCII: " << PrintBytesAsAscii{m_hash.data(), m_hash.size()};
 
     const Record recordToWrite{
         username.to_string(),
-        std::string(std::begin(m_hash), std::end(m_hash)) };
+        std::string(std::begin(m_hash), std::end(m_hash))};
 
-    const bool couldWriteData{ static_cast<bool>(recordToWrite.write(fs)) };
+    const bool couldWriteData{static_cast<bool>(recordToWrite.write(fs))};
 
     if (couldWriteData) {
-        return AddUserResult{
-            AddUserResult::Value::Success,
-            "Success"
-        };
+        return AddUserResult{AddUserResult::Value::Success, "Success"};
     }
 
-    return AddUserResult{
-        AddUserResult::Value::Failure,
-        "Failed to write to binary file."
-    };
+    return AddUserResult{AddUserResult::Value::Failure,
+                         "Failed to write to binary file."};
 }
 
 bool Bcrypt::checkPasswordValidity(
@@ -165,7 +137,7 @@ bool Bcrypt::checkPasswordValidity(
 {
     // find the hash for 'username'. If there is no 'username' in the binary
     // file the optional will be a nullopt
-    boost::optional<std::string> hashOpt{ findHashOfUser(username) };
+    boost::optional<std::string> hashOpt{findHashOfUser(username)};
 
     ITSP3_LOG << "username: \"" << username << '"' << '\n'
               << "password: \"" << password << '"';
@@ -178,28 +150,24 @@ bool Bcrypt::checkPasswordValidity(
 
     // create the hash input to hash and then have it be checked against the
     // hash read from the file using 'findHashOfUser'
-    std::string input{ username.to_string() + password.to_string() };
+    std::string input{username.to_string() + password.to_string()};
 
     // zero out the memory of the hash input as it does contain the password
-    StringScrubber inputScrubber{ input };
+    StringScrubber inputScrubber{input};
 
     ITSP3_LOG << "input: (username + password)\n"
-              << "hex:   "
-              << pl::print_bytes_as_hex{ input.data(), input.size() }
+              << "hex:   " << pl::print_bytes_as_hex{input.data(), input.size()}
               << '\n'
-              << "ASCII: "
-              << PrintBytesAsAscii{ input.data(), input.size() };
+              << "ASCII: " << PrintBytesAsAscii{input.data(), input.size()};
 
-    const std::string hash{ *hashOpt }; // get the hash read from the file.
+    const std::string hash{*hashOpt}; // get the hash read from the file.
 
     ITSP3_LOG << "hash\n"
-              << "hex:   "
-              << pl::print_bytes_as_hex{ hash.data(), hash.size() }
+              << "hex:   " << pl::print_bytes_as_hex{hash.data(), hash.size()}
               << '\n'
-              << "ASCII: "
-              << PrintBytesAsAscii{ hash.data(), hash.size() };
+              << "ASCII: " << PrintBytesAsAscii{hash.data(), hash.size()};
 
-    const int ret{ bcrypt_checkpw(input.data(), hash.data()) };
+    const int ret{bcrypt_checkpw(input.data(), hash.data())};
 
     return ret == 0; // will be true if the hash input matches with the hash
                      // read from the binary file after having hashed the
@@ -208,21 +176,21 @@ bool Bcrypt::checkPasswordValidity(
 
 boost::optional<std::string> Bcrypt::findHashOfUser(boost::string_ref username)
 {
-    std::fstream fs{ }; // filestream to read with.
+    std::fstream fs{}; // filestream to read with.
 
     ITSP3_LOG << "input:\n"
               << "hex:   "
-              << pl::print_bytes_as_hex{ username.data(), username.size() }
+              << pl::print_bytes_as_hex{username.data(), username.size()}
               << '\n'
               << "ASCII: "
-              << PrintBytesAsAscii{ username.data(), username.size() };
+              << PrintBytesAsAscii{username.data(), username.size()};
 
     if (not openFileForBinaryReading(fs, m_filePath)) {
         ITSP3_LOG << "Failed to open file for reading, returning nullopt";
         return boost::none;
     }
 
-    Record currentRecord{ };
+    Record currentRecord{};
 
     while (Record::read(fs, &currentRecord)) {
         if (currentRecord.getUsername() == username) { // it's the same username
