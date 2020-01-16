@@ -19,6 +19,8 @@ endif()
 # NDEBUG preprocessor symbol
 if (NOT CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-DNDEBUG)
+else ()
+    add_definitions(-DDEBUG_MODE)
 endif()
 
 # declare project

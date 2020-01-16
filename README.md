@@ -55,7 +55,7 @@ bash ./build.sh Release
 ## Running
 After having built the application it can be run using  
 `
-./build/itsp3a
+bash ./run.sh
 `  
 Note that the application will prompt for keyboard input.  
 
