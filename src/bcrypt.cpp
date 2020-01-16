@@ -4,7 +4,7 @@
 #include "../include/binary_io.hpp" // itsp3::openFileForBinaryReading, itsp3::openFileForBinaryWriting
 #include "../include/string_scrubber.hpp" // itsp3::StringScrubber
 #include "../include/record.hpp" // itsp3::Record
-#include <pl/print_bytes_as_hex.hpp> // pl::PrintBytesAsHex
+#include <pl/print_bytes_as_hex.hpp> // pl::print_bytes_as_hex
 #include <pl/algo/ranged_algorithms.hpp> // pl::algo::copy
 #include <ciso646> // not, or, and
 #include <string> // std::string
@@ -104,7 +104,7 @@ AddUserResult Bcrypt::addUser(
 
     ITSP3_LOG << "Generated salt.\n"
               << "hex:   "
-              << pl::PrintBytesAsHex{ m_salt.data(), m_salt.size() }
+              << pl::print_bytes_as_hex{ m_salt.data(), m_salt.size() }
               << '\n'
               << "ASCII: "
               << PrintBytesAsAscii{ m_salt.data(), m_salt.size() };
@@ -117,7 +117,7 @@ AddUserResult Bcrypt::addUser(
 
     ITSP3_LOG << "The concatenation of username and password (hashInput) is:\n"
               << "hex:   "
-              << pl::PrintBytesAsHex{ hashInput.data(), hashInput.size() }
+              << pl::print_bytes_as_hex{ hashInput.data(), hashInput.size() }
               << '\n'
               << "ASCII: "
               << PrintBytesAsAscii{ hashInput.data(), hashInput.size() };
@@ -135,7 +135,7 @@ AddUserResult Bcrypt::addUser(
 
     ITSP3_LOG << "Created hash of the hashInput\n"
               << "hex:   "
-              << pl::PrintBytesAsHex{ m_hash.data(), m_hash.size() }
+              << pl::print_bytes_as_hex{ m_hash.data(), m_hash.size() }
               << '\n'
               << "ASCII: "
               << PrintBytesAsAscii{ m_hash.data(), m_hash.size() };
@@ -185,7 +185,7 @@ bool Bcrypt::checkPasswordValidity(
 
     ITSP3_LOG << "input: (username + password)\n"
               << "hex:   "
-              << pl::PrintBytesAsHex{ input.data(), input.size() }
+              << pl::print_bytes_as_hex{ input.data(), input.size() }
               << '\n'
               << "ASCII: "
               << PrintBytesAsAscii{ input.data(), input.size() };
@@ -194,7 +194,7 @@ bool Bcrypt::checkPasswordValidity(
 
     ITSP3_LOG << "hash\n"
               << "hex:   "
-              << pl::PrintBytesAsHex{ hash.data(), hash.size() }
+              << pl::print_bytes_as_hex{ hash.data(), hash.size() }
               << '\n'
               << "ASCII: "
               << PrintBytesAsAscii{ hash.data(), hash.size() };
@@ -212,7 +212,7 @@ boost::optional<std::string> Bcrypt::findHashOfUser(boost::string_ref username)
 
     ITSP3_LOG << "input:\n"
               << "hex:   "
-              << pl::PrintBytesAsHex{ username.data(), username.size() }
+              << pl::print_bytes_as_hex{ username.data(), username.size() }
               << '\n'
               << "ASCII: "
               << PrintBytesAsAscii{ username.data(), username.size() };

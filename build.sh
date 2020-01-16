@@ -21,9 +21,13 @@ cd ./submodules/bcrypt
 make
 cd $DIR
 
+rm -rf ./build
+mkdir ./build
+cd ./build
+
 # Generate the platform specific build scripts
 if [ "$1" == "Debug" ]; then
-    cmake -DCMAKE_BUILD_TYPE=Debug .
+    cmake -DCMAKE_BUILD_TYPE=Debug ..
     
     # Build the project
     cmake --build .
@@ -33,7 +37,7 @@ if [ "$1" == "Debug" ]; then
 fi
 
 if [ "$1" == "Release" ]; then
-    cmake -DCMAKE_BUILD_TYPE=Release .
+    cmake -DCMAKE_BUILD_TYPE=Release ..
     
     # Build the project
     cmake --build .
