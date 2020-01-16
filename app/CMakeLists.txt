@@ -1,0 +1,3 @@
+file(GLOB APPLICATION_SOURCE_FILES CONFIGURE_DEPENDS ./*.cpp)
+add_executable(${PROJECT_NAME} "${APPLICATION_SOURCE_FILES}")
+target_link_libraries(${PROJECT_NAME} PRIVATE itsp3a_lib)
