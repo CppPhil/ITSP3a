@@ -5,13 +5,6 @@ cmake_minimum_required(VERSION 3.1)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# home directory
-if(WIN32)
-    set(HOMEDIR $ENV{USERPROFILE})
-else()
-    set(HOMEDIR $ENV{HOME})
-endif()
-
 # warning flags
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -Weffc++ -pedantic -pedantic-errors -Wcast-align -Wcast-qual -Wconversion -Wfloat-equal -Wmissing-field-initializers -Wmissing-include-dirs -Wmissing-noreturn -Wpointer-arith -Wredundant-decls -Wshadow -Wstack-protector -Wstrict-aliasing=2 -Wunreachable-code -Wunused -Wunused-parameter")
@@ -32,9 +25,9 @@ endif()
 project(itsp3a)
 
 # include paths
-include_directories(${HOMEDIR}/bcrypt)
-include_directories(${HOMEDIR}/doctest/doctest)
-include_directories(${HOMEDIR}/philslib/include)
+include_directories(${CMAKE_BINARY_DIR}/../submodules/bcrypt)
+include_directories(${CMAKE_BINARY_DIR}/../submodules/doctest/doctest)
+include_directories(${CMAKE_BINARY_DIR}/../submodules/philslib/include)
 
 # STATICALLY LINKED LIBRARY
 set(LIBRARY_NAME itsp3a_lib)

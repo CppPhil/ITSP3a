@@ -1,0 +1,9 @@
+[submodule "submodules/bcrypt"]
+	path = submodules/bcrypt
+	url = https://github.com/rg3/bcrypt.git
+[submodule "submodules/philslib"]
+	path = submodules/philslib
+	url = https://github.com/CppPhil/philslib.git
+[submodule "submodules/doctest"]
+	path = submodules/doctest
+	url = https://github.com/onqtam/doctest.git

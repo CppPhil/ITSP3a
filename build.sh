@@ -1,13 +1,25 @@
 #!/bin/bash
 
+# Directory containing this bash script
+readonly DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
 # Check the amount of command line parameters
 if [ "$#" -ne 1 ]; then
     echo "Illegal number of parameters. Enter Debug or Release for the first parameter."
     exit 1
 fi
 
+readonly prev_dir=$(pwd)
+
+cd $DIR
+
 # Clean the project directory
 bash ./clean.sh
+
+# Build bcrypt
+cd ./submodules/bcrypt
+make
+cd $DIR
 
 # Generate the platform specific build scripts
 if [ "$1" == "Debug" ]; then
@@ -16,6 +28,7 @@ if [ "$1" == "Debug" ]; then
     # Build the project
     cmake --build .
     
+    cd $prev_dir
     exit 0
 fi
 
@@ -25,8 +38,10 @@ if [ "$1" == "Release" ]; then
     # Build the project
     cmake --build .
     
+    cd $prev_dir
     exit 0
 fi
 
+cd $prev_dir
 exit 1
 
