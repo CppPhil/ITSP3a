@@ -67,14 +67,6 @@ bash ./test.sh
 Note that running the tests can take a long time as many hashes are being calculated.  
 (Up to ~30 seconds approximately)
 
-## Cleaning the build directory
-If you for some reason want to 'clean' the build directory you can invoke  
-`
-bash ./clean.sh
-`  
-to do just that.  
-You might want to 'clean' the build directory after having added a new source file in order to make QtCreator recognize the new source file's existence.
-
 ## Generating the documentation
 To generate the documentation run  
 `
