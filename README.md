@@ -1,4 +1,7 @@
 # ITSP3 Application README
+
+## Created in late 2017
+
 ## Prerequisites
 - git
 - CMake
@@ -14,7 +17,8 @@ There are specifically no current plans to support Microsoft Windows operating s
 Note that currently only x64 based processors are supported.  
 
 ## Cloning 
-TODO HERE
+The repository must be cloned recursively to fetch the submodules.  
+`git clone https://github.com/CppPhil/ITSP3a.git --recursive` for instance.  
 
 ## Dependencies
 ### bcrypt
