@@ -1,16 +1,16 @@
 #ifndef INCG_ITSP3_BRUTEFORCE_HPP
 #define INCG_ITSP3_BRUTEFORCE_HPP
+#include <array>         // std::array
+#include <cstddef>       // std::size_t
 #include <pl/except.hpp> // PL_DEFINE_EXCEPTION_TYPE, PL_THROW_WITH_SOURCE_INFO
-#include <cstddef> // std::size_t
-#include <stdexcept> // std::logic_error
-#include <string> // std::string
-#include <array> // std::array
-#include <vector> // std::vector
+#include <stdexcept>     // std::logic_error
+#include <string>        // std::string
+#include <vector>        // std::vector
 
-namespace itsp3
-{
+namespace itsp3 {
 PL_DEFINE_EXCEPTION_TYPE(
-    NoMatchInBruteforceAlgorithmException, std::logic_error);
+    NoMatchInBruteforceAlgorithmException,
+    std::logic_error);
 
 /*!
  * \brief Bruteforce algorithm.
@@ -22,47 +22,42 @@ PL_DEFINE_EXCEPTION_TYPE(
  *
  * Generates all the words of the alphabet 'alphabet' until a string is
  * generated for which doesMatch returns true.
-**/
-template <std::size_t AlphabetSize, typename Callable>
+ **/
+template<std::size_t AlphabetSize, typename Callable>
 std::string bruteforce(
-    const Callable &doesMatch,
-    const std::array<char, AlphabetSize> &alphabet)
+    const Callable&                       doesMatch,
+    const std::array<char, AlphabetSize>& alphabet)
 {
     // iterate over the alphabet
-    for (std::size_t curWordLen{ 0U };
-         curWordLen <= alphabet.size();
+    for (std::size_t curWordLen{0U}; curWordLen <= alphabet.size();
          ++curWordLen) {
-
         // will contain the current indices into the alphabet
         std::vector<std::size_t> indices(curWordLen, 0U);
 
         // will contain the current word generated
         std::string curWord(curWordLen, '\0');
 
-newIndices:
+    newIndices:
 
         // fill the current word with the characters from the alphabet
         // according to the current indices
-        for (std::size_t i{ 0U }; i < curWordLen; ++i) {
+        for (std::size_t i{0U}; i < curWordLen; ++i) {
             curWord[i] = alphabet[indices[i]];
         }
 
         // if it matches -> return the match.
-        if (doesMatch(curWord)) {
-            return curWord;
-        }
+        if (doesMatch(curWord)) { return curWord; }
 
         // iterate backwards over the indices.
-        for (std::size_t i{ curWordLen }; i-- > 0U;) {
+        for (std::size_t i{curWordLen}; i-- > 0U;) {
             // advance the current index by 1 so the next character
             // will be selected.
             ++(indices[i]);
 
             // if it reached the end of the alphabet -> reset
             // and go increase the next index to the left.
-            if (indices[i] == alphabet.size()) {
-                indices[i] = 0U;
-            } else {
+            if (indices[i] == alphabet.size()) { indices[i] = 0U; }
+            else {
                 // if the current index didn't reach the end
                 // create the new word from the new indices.
                 goto newIndices;

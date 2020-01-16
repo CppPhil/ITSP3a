@@ -6,8 +6,9 @@
 readonly DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # Directories
+readonly INCLUDE_DIR=$DIR/include
 readonly SRC_DIR=$DIR/src
-readonly TEST_DIR=$DIR/test
+readonly TEST_DIR=$DIR/test/src
 readonly CLANG_FMT_DIR=$DIR/submodules/clang-format
 
 # files
@@ -29,6 +30,7 @@ format () {
 }
 
 # Format the source files.
+format $INCLUDE_DIR
 format $SRC_DIR
 format $TEST_DIR
 

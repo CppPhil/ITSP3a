@@ -2,24 +2,22 @@
  * \file alphabets.hpp
  * \brief Exports utilities for creating alphabets as std::arrays from
  *        ranges of ASCII values.
-**/
+ **/
 #ifndef INCG_ITSP3_ALPHABETS_HPP
 #define INCG_ITSP3_ALPHABETS_HPP
+#include <array>                  // std::array
 #include <pl/cont/make_array.hpp> // pl::cont::makeArray
-#include <array> // std::array
 #include <type_traits> // std::index_sequence, std::make_index_sequence
 
-namespace itsp3
-{
-namespace detail
-{
+namespace itsp3 {
+namespace detail {
 /*!
  * \brief Implementation function of makeAlphabet.
  * \note Not to be used directly.
-**/
-template <int From, int To, std::size_t ...Indices>
+ **/
+template<int From, int To, std::size_t... Indices>
 constexpr std::array<char, To - From> makeAlphabetImpl(
-    std::index_sequence<Indices ...>)
+    std::index_sequence<Indices...>)
 {
     /*  If 'From' is 0x41 (The ASCII value for 'A')
      *  and 'To' is 0x43  (The ASCII value for 'C')
@@ -34,7 +32,7 @@ constexpr std::array<char, To - From> makeAlphabetImpl(
      *  std::array<char, 2>{ 'A', 'B' }
      *  at compile time.
      */
-    return { { (From + static_cast<int>(Indices))... } };
+    return {{(From + static_cast<int>(Indices))...}};
 }
 } // namespace detail
 
@@ -42,8 +40,8 @@ constexpr std::array<char, To - From> makeAlphabetImpl(
  * \brief Compile time function to create an alphabet.
  * \return The alphabet created.
  * \warning Assumes that the underlying C++ implementation implements
- *          the char type using ASCII encoding, which is very likely in practice,
- *          albeit specifically not required by the C++ standard.
+ *          the char type using ASCII encoding, which is very likely in
+ *practice, albeit specifically not required by the C++ standard.
  *
  * Creates an alphabet as std::array at compile time.
  * 'From' indicates the ASCII value at which the alphabet shall begin.
@@ -51,8 +49,8 @@ constexpr std::array<char, To - From> makeAlphabetImpl(
  * Note that the character with the ASCII value of 'To' will not be included
  * in the resulting std::array, as the range denoted by ['From' .. 'To') is
  * half open, much like C++ style iterators.
-**/
-template <int From, int To>
+ **/
+template<int From, int To>
 constexpr std::array<char, To - From> makeAlphabet()
 {
     static_assert(To >= From, "To was less than From!");
@@ -66,16 +64,15 @@ constexpr std::array<char, To - From> makeAlphabet()
     // as a template non-type parameter pack, which can then be used
     // in a template parameter pack expansion context.
     return detail::makeAlphabetImpl<From, To>(
-        std::make_index_sequence<To - From>{ });
+        std::make_index_sequence<To - From>{});
 }
-namespace
-{
+namespace {
 /*!
  * The ASCII alphabet.
  * Contains the characters of the range [0x00 .. 0x80), which is equivalent to
  * [0x00 .. 0x7F].
  * See an ASCII chart here: http://en.cppreference.com/w/cpp/language/ascii
-**/
+ **/
 constexpr std::array<char, 0x80 - 0x00> asciiAlphabet
     = makeAlphabet<0x00, 0x80>();
 } // anonymous namespace

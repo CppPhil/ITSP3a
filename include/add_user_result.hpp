@@ -1,29 +1,26 @@
 #ifndef INCG_ITSP3_ADD_USER_RESULT_HPP
 #define INCG_ITSP3_ADD_USER_RESULT_HPP
-#include "check_password.hpp" // itsp3::PasswordCheckingResult
+#include "check_password.hpp"           // itsp3::PasswordCheckingResult
 #include <boost/utility/string_ref.hpp> // boost::string_ref
-#include <string> // std::string
-#include <iosfwd> // std::ostream
+#include <iosfwd>                       // std::ostream
+#include <string>                       // std::string
 
-namespace itsp3
-{
+namespace itsp3 {
 /*!
  * \brief Type returned by the addUser non-static member function of type
  *        Bcrypt.
-**/
-class AddUserResult
-{
+ **/
+class AddUserResult {
 public:
     using this_type = AddUserResult;
 
     /*!
      * \brief Nested scoped enum type acting as a more legible boolean
      *        representing failure or success.
-    **/
-    enum class Value
-    {
+     **/
+    enum class Value {
         Failure, /*!< The user could not be added to the binary file. */
-        Success /*!< The user could be added to the binary file. */
+        Success  /*!< The user could be added to the binary file. */
     };
 
     /*!
@@ -37,9 +34,8 @@ public:
      *       associated operator<< will be the text printed by applying the
      *       operator<< to the PasswordCheckingResult passed in.
      * \see checkPassword
-    **/
-    explicit AddUserResult(
-        PasswordCheckingResult passwordCheckingResult);
+     **/
+    explicit AddUserResult(PasswordCheckingResult passwordCheckingResult);
 
     /*!
      * \brief Binary constructor to 'manually' create AddUserResult object
@@ -51,7 +47,7 @@ public:
      * \param message The message that shall be returned by the getMessage
      *                non-static member function and be printed to an
      *                ostream by the associated operator<< function.
-    **/
+     **/
     AddUserResult(Value ok, std::string message);
 
     /*!
@@ -60,17 +56,17 @@ public:
      *         PasswordCheckingResult::Ok or from AddUserResult::Value::Success
      *         and an arbitrary message.
      *         Otherwise false will be returned.
-    **/
+     **/
     explicit operator bool() const noexcept;
 
     /*!
      * \brief Returns a string_ref to the message of this object.
      * \return A string_ref to the message of this object.
-    **/
+     **/
     boost::string_ref getMessage() const noexcept;
 
 private:
-    bool m_ok; /*!< Whether or not this object indicates success */
+    bool        m_ok;      /*!< Whether or not this object indicates success */
     std::string m_message; /*!< The message of this object */
 };
 
@@ -81,9 +77,7 @@ private:
  * \return A reference to 'os'.
  * \note Will print the same message that would be returned by
  *       addUserResult.getMessage()
-**/
-std::ostream &operator<<(
-    std::ostream &os,
-    const AddUserResult &addUserResult);
+ **/
+std::ostream& operator<<(std::ostream& os, const AddUserResult& addUserResult);
 } // namespace itsp3
 #endif // INCG_ITSP3_ADD_USER_RESULT_HPP

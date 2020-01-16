@@ -1,17 +1,16 @@
 /*!
  * \file binary_io.hpp
  * \brief Exports functions for binary I/O.
-**/
+ **/
 #ifndef INCG_ITSP3_BINARY_IO_HPP
 #define INCG_ITSP3_BINARY_IO_HPP
-#include <pl/assert.hpp> // PL_DBG_CHECK_PRE
 #include <boost/utility/string_ref.hpp> // boost::string_ref
-#include <cstddef> // std::size_t
-#include <iosfwd> // std::ostream, std::istream
-#include <fstream> // std::fstream
+#include <cstddef>                      // std::size_t
+#include <fstream>                      // std::fstream
+#include <iosfwd>                       // std::ostream, std::istream
+#include <pl/assert.hpp>                // PL_DBG_CHECK_PRE
 
-namespace itsp3
-{
+namespace itsp3 {
 /*!
  * \brief Opens the filestream 'fs' for binary reading from file at
  *        'pathToFile'.
@@ -20,9 +19,9 @@ namespace itsp3
  * \return A reference to 'fs'.
  * \warning Check whether opening the file succeeded using .operator bool()
  *          'fs' may not already be opened!
-**/
-std::fstream &openFileForBinaryReading(
-    std::fstream &fs,
+ **/
+std::fstream& openFileForBinaryReading(
+    std::fstream&     fs,
     boost::string_ref pathToFile);
 
 /*!
@@ -34,9 +33,9 @@ std::fstream &openFileForBinaryReading(
  *       append to the file by default.
  * \warning Check whether opening the file succeeded using .operator bool()
  *          'fs' may not already be opened!
-**/
-std::fstream &openFileForBinaryWriting(
-    std::fstream &fs,
+ **/
+std::fstream& openFileForBinaryWriting(
+    std::fstream&     fs,
     boost::string_ref pathToFile);
 
 /*!
@@ -48,11 +47,9 @@ std::fstream &openFileForBinaryWriting(
  *                     May not be incorrect!
  * \return A reference to 'os'.
  * \warning 'os' must've been opened in binary and in output mode!
-**/
-std::ostream &writeBinary(
-    std::ostream &os,
-    const void *data,
-    std::size_t dataByteSize);
+ **/
+std::ostream&
+writeBinary(std::ostream& os, const void* data, std::size_t dataByteSize);
 
 /*!
  * \brief Reads binary data from an istream.
@@ -61,10 +58,8 @@ std::ostream &writeBinary(
  * \param dataByteSize The amount of bytes to read. May not be larger than
  *                     the byte size of the buffer pointed to by 'data'.
  * \return A reference to 'is'.
-**/
-std::istream &readBinary(
-    std::istream &is,
-    void *data,
-    std::size_t dataByteSize);
+ **/
+std::istream&
+readBinary(std::istream& is, void* data, std::size_t dataByteSize);
 } // namespace itsp3
 #endif // INCG_ITSP3_BINARY_IO_HPP

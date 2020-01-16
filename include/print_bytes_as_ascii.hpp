@@ -1,15 +1,13 @@
 #ifndef INCG_ITSP3_PRINT_BYTES_AS_ASCII_HPP
 #define INCG_ITSP3_PRINT_BYTES_AS_ASCII_HPP
-#include <iosfwd> // std::ostream
 #include <cstddef> // std::size_t
+#include <iosfwd>  // std::ostream
 
-namespace itsp3
-{
+namespace itsp3 {
 /*!
  * \brief Type to print memory as ASCII characters.
-**/
-class PrintBytesAsAscii
-{
+ **/
+class PrintBytesAsAscii {
 public:
     using this_type = PrintBytesAsAscii;
 
@@ -20,10 +18,8 @@ public:
      *             May not be nullptr or otherwise be invalid!
      * \param dataByteSize The size of the region of memory pointed to by
      *                     data. May not be incorrect!
-    **/
-    PrintBytesAsAscii(
-        const void *data,
-        std::size_t dataByteSize) noexcept;
+     **/
+    PrintBytesAsAscii(const void* data, std::size_t dataByteSize) noexcept;
 
     /*!
      * \brief Prints the memory that the PrintBytesAsAscii object given
@@ -32,13 +28,13 @@ public:
      * \param pbaa The PrintBytesAsAscii object that references some region
      *             of memory that shall be printed as ASCII characters.
      * \return A reference to 'os'.
-    **/
-    friend std::ostream &operator<<(
-        std::ostream &os,
-        const PrintBytesAsAscii &pbaa);
+     **/
+    friend std::ostream& operator<<(
+        std::ostream&            os,
+        const PrintBytesAsAscii& pbaa);
 
 private:
-    const void *m_data;
+    const void* m_data;
     std::size_t m_dataByteSize;
 };
 } // namespace itsp3
