@@ -13,9 +13,6 @@ readonly prev_dir=$(pwd)
 
 cd $DIR
 
-# Clean the project directory
-bash ./clean.sh
-
 # Build bcrypt
 cd ./submodules/bcrypt
 make
