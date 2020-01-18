@@ -29,9 +29,13 @@ format () {
     rm -f ./.clang-format
 }
 
+mv $DIR/main.cpp $SRC_DIR/main.cpp
+
 # Format the source files.
 format $INCLUDE_DIR
 format $SRC_DIR
 format $TEST_DIR
+
+mv $SRC_DIR/main.cpp $DIR/main.cpp
 
 exit 0
